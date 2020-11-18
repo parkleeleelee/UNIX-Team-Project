@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <title>일정추가</title>
+    <style>
+        * {
+            font-size: 16px;
+            font-family: Consolas, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <p><input type="text" id="tit" placeholder="일정입력"></p>
+    <p><input type="date" id="startdate"></p>
+    <p><input type="time" id="starttime"></p>
+    <p><input type="date" id="enddate"></p>
+    <p><input type="time" id="endtime"></p>
+    <p><input type="text" id="color"></p>
+    <p><input type="text" id="reid"></p>
+    <button onclick="godat()">적용</button>
+    <script>
+        // 적용 누를 시 실행 시킬 함수
+        function godat() {
+            var tit = document.getElementById('tit').value;
+            var startdat = document.getElementById('startdate').value + 'T' + document.getElementById('starttime').value
+            var enddat = document.getElementById('enddate').value + 'T' + document.getElementById('endtime').value
+            var color = document.getElementById('color').value;
+            var reid = document.getElementById('reid').value;
+            // 파이어베이스를 이용해 실시간으로 데이터를 저장, 수정
+
+
+            // 달력에 추가하는 함수 실행
+            window.opener.addev(tit, startdat, enddat, false, color, reid);
+            self.close();
+        }
+    </script>
+    <script src="fb.js" defer></script>
+</body>
+
+</html>

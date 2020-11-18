@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>시험추가</title>
+</head>
+<body>
+    <input type="text" id = "tit" placeholder="시험 입력">
+    <button onclick="search()">검색</button>
+    <p></p>
+    <select name = "dat" id = "dat">
+    <optgroup label = '실기'>
+    <script>
+       var c=['2020-11-10','2020-11-20','2020-11-30'];
+       
+       for(i=0;i<c.length;i++)
+       {   
+           document.write("<option>"+c[i]+"</option>");
+       }
+    </script>
+    </optgroup><optgroup label = '필기'>
+        <script>
+           var v=['2020-11-10','2020-11-20','2020-11-30'];
+           for(i=0;i<v.length;i++)
+           {   
+               document.write("<option>"+v[i]+"</option>");
+           }
+        </script>
+        </optgroup>
+    </select>
+    <p><button onclick="add()">적용</button></p>
+    <script>
+        function add()
+        {
+            var title = document.getElementById("tit").value;
+            var s = document.getElementById("dat");
+            var dat = s.options[s.selectedIndex].value;
+            window.opener.addev(title,dat,dat,true);
+            self.close();
+        }
+        function search()
+        {
+            window.open("searchtitle.html", "addlicense", "width=400, height=300, left=100, top=50");
+        }
+    </script>
+</body>
+</html>

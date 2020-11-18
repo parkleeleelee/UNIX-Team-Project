@@ -1,60 +1,48 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
     <title>Liary</title>
     <meta charset='utf-8' />
     <link href='./lib/main.css' rel='stylesheet' />
     <script src='./lib/main.js'></script>
     <script src='./lib/locales-all.js'></script>
     <script>
+        var addev = "";
+
         document.addEventListener('DOMContentLoaded', function() {
             var initialLocaleCode = 'ko';
             var localeSelectorEl = document.getElementById('locale-selector');
-
+            addev = function addev(title, startdate, enddate, allday, back, reid) {
+                calendar.addEvent({
+                    title: title,
+                    start: startdate,
+                    end: enddate,
+                    allDay: allday,
+                    backgroundColor: back,
+                    resourceid: reid
+                })
+            }
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 customButtons: {
                     myCustomButton: {
                         text: '시험추가',
                         click: function() {
-                            var title = prompt('일정추가:');
-                            if (title) {
-                                var dat = prompt('날짜추가:');
-                                calendar.addEvent({
-                                    title: title,
-                                    start: dat,
-                                    allDay: true
-                                })
-                                alert("완료");
-                            }
+                            window.open("addlicense.html", "addlicense", "width=400, height=300, left=100, top=50");
                         }
                     },
-                    myButton: {
+
+                    twoButton: {
                         text: '일정추가',
                         click: function() {
-                            var title = prompt('일정추가:');
-                            var dat = prompt('날짜추가(yyyy-mm-ddTqq:qq:qq):');
-                            var enq = prompt('끝(yyyy-mm-ddTqq:qq:qq) : ');
-                            if (title) {
-                                calendar.addEvent({
-                                    title: title,
-                                    start: dat,
-                                    end: enq,
-                                    allDay: false
-                                })
-                                alert("완료");
-                            }
+                            window.open("addlist.html", "dataselect", "width=400, height=300, left=100, top=50");
                         }
                     }
                 },
-
-
-
+                editable: true,
                 headerToolbar: {
-                    left: 'prev,next today myCustomButton myButton',
+                    left: 'prev,next today myCustomButton twoButton',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
@@ -77,21 +65,29 @@
                     calendar.unselect()
                 },
                 eventClick: function(arg) {
-                    if (title = prompt('어떤 작업을 하시겠어요?')) {
-                        if (title == '삭제') {
-                            arg.event.remove()
-                            alert('삭제되었습니다');
-                        } else if (title == '완료') {
-                            arg.Color = '#FF0000';
-                        } else {
-                            alert('잘못입력하셨습니다.');
-                        }
+                    var tit = prompt('어떤 작업을 하시겠어요?')
+                    if (tit == '삭제') {
+                        arg.event.remove()
+                        alert('삭제되었습니다');
+                    } else if (tit == '완료') {
+                        var title = arg.event.title;
+                        calendar.addEvent({
+                            title: title,
+                            start: arg.event.start,
+                            end: arg.end,
+                            allDay: arg.allDay,
+                            backgroundColor: 'red',
+                        })
+                        arg.event.remove()
 
+                    } else {
+                        alert('잘못입력하셨습니다.');
                     }
+
 
                 },
 
-                editable: true,
+
                 dayMaxEvents: true, // allow "more" link when too many events
                 events: [{
                     title: 'All Day Event',
@@ -162,6 +158,17 @@
 </head>
 
 <body>
+    <section id="WhenSigendOut">
+        <button id="signInBtn" onclick="login()">로그인!!</button>
+    </section>
+    <section id="whenSignedIn">
+        <div id="userDetails"></div>
+        <button id="signOutBtn" onclick="logout()">로그아웃</button>
+    </section>
+
+    <script>
+    </script>
+    <div id='calendar'></div>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
 
@@ -169,226 +176,50 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-analytics.js"></script>
 
-    <script>
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        var firebaseConfig = {
-            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
-            authDomain: "liary-30c97.firebaseapp.com",
-            databaseURL: "https://liary-30c97.firebaseio.com",
-            projectId: "liary-30c97",
-            storageBucket: "liary-30c97.appspot.com",
-            messagingSenderId: "1005204747821",
-            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
-            measurementId: "G-9PKBBRDZ38"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-    </script>
-    <button id="login">로그인</button>
-    <script src="app.js" defer></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="/__/firebase/8.0.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="/__/firebase/8.0.1/firebase-analytics.js"></script>
+
+    <script src="/__/firebase/8.0.0/firebase-auth.js"></script>
+    <!-- Initialize Firebase -->
+    <script src="/__/firebase/init.js"></script>
 
     <script>
-    </script>
-    <div id='calendar'></div>
-</body>
-
-=======
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Liary</title>
-    <meta charset='utf-8' />
-    <link href='./lib/main.css' rel='stylesheet' />
-    <script src='./lib/main.js'></script>
-    <script src='./lib/locales-all.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var initialLocaleCode = 'ko';
-            var localeSelectorEl = document.getElementById('locale-selector');
-
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                customButtons: {
-                    myCustomButton: {
-                        text: '시험추가',
-                        click: function() {
-                            var title = prompt('일정추가:');
-                            if (title) {
-                                var dat = prompt('날짜추가:');
-                                calendar.addEvent({
-                                    title: title,
-                                    start: dat,
-                                    allDay: true
-                                })
-                                alert("완료");
-                            }
-                        }
-                    },
-                    myButton: {
-                        text: '일정추가',
-                        click: function() {
-                            var title = prompt('일정추가:');
-                            var dat = prompt('날짜추가(yyyy-mm-ddTqq:qq:qq):');
-                            var enq = prompt('끝(yyyy-mm-ddTqq:qq:qq) : ');
-                            if (title) {
-                                calendar.addEvent({
-                                    title: title,
-                                    start: dat,
-                                    end: enq,
-                                    allDay: false
-                                })
-                                alert("완료");
-                            }
-                        }
-                    }
-                },
-
-
-
-                headerToolbar: {
-                    left: 'prev,next today myCustomButton myButton',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                initialDate: new Date(),
-                navLinks: true, // can click day/week names to navigate views
-                selectable: true,
-                selectMirror: true,
-                locale: initialLocaleCode,
-
-                select: function(arg) {
-                    var title = prompt('일정추가:');
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: arg.start,
-                            end: arg.end,
-                            allDay: arg.allDay
-                        })
-                    }
-                    calendar.unselect()
-                },
-                eventClick: function(arg) {
-                    if (title = prompt('어떤 작업을 하시겠어요?')) {
-                        if (title == '삭제') {
-                            arg.event.remove()
-                            alert('삭제되었습니다');
-                        } else if (title == '완료') {
-                            arg.Color = '#FF0000';
-                        } else {
-                            alert('잘못입력하셨습니다.');
-                        }
-
-                    }
-
-                },
-
-                editable: true,
-                dayMaxEvents: true, // allow "more" link when too many events
-                events: [{
-                    title: 'All Day Event',
-                    start: '2020-09-01'
-                }, {
-                    title: 'Long Event',
-                    start: '2020-09-07',
-                    end: '2020-09-10'
-                }, {
-                    groupId: 999,
-                    title: 'Repeating Event',
-                    start: '2020-09-09T16:00:00'
-                }, {
-                    groupId: 999,
-                    title: 'Repeating Event',
-                    start: '2020-09-16T16:00:00'
-                }, {
-                    title: 'Conference',
-                    start: '2020-09-11',
-                    end: '2020-09-13'
-                }, {
-                    title: 'Meeting',
-                    start: '2020-09-12T10:30:00',
-                    end: '2020-09-12T12:30:00'
-                }, {
-                    title: 'Lunch',
-                    start: '2020-09-12T12:00:00'
-                }, {
-                    title: 'Meeting',
-                    start: '2020-09-12T14:30:00'
-                }, {
-                    title: 'Happy Hour',
-                    start: '2020-09-12T17:30:00'
-                }, {
-                    title: 'Dinner',
-                    start: '2020-09-12T20:00:00'
-                }, {
-                    title: 'Birthday Party',
-                    start: '2020-09-13T07:00:00'
-                }, {
-                    title: 'Click for Google',
-                    url: '',
-                    start: '2020-11-07'
-                }, {
-                    title: 'dddd',
-                    start: '2020-11-05T16:00:00',
-                    end: '2020-11-05T16:00:00',
-                    allDay: false
-                }]
+        function login() {
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                // ...
+            }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
             });
-
-            calendar.render();
-        });
-    </script>
-    <style>
-        body {
-            margin: 200px 100px;
-            padding: 0;
-            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-            font-size: 14px;
         }
-        
-        #calendar {
-            max-width: 1100px;
-            margin: 0 auto;
+
+        function logout() {
+            firebase.auth().signOut().then(function() {
+                alert("로그아웃");
+            }).catch(function(error) {
+                if (error) {
+                    alert("로그아웃 실패");
+                }
+            });
         }
-    </style>
-</head>
-
-<body>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
-
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-analytics.js"></script>
-
-    <script>
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        var firebaseConfig = {
-            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
-            authDomain: "liary-30c97.firebaseapp.com",
-            databaseURL: "https://liary-30c97.firebaseio.com",
-            projectId: "liary-30c97",
-            storageBucket: "liary-30c97.appspot.com",
-            messagingSenderId: "1005204747821",
-            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
-            measurementId: "G-9PKBBRDZ38"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
     </script>
-    <button id="login">로그인</button>
+
     <script src="app.js" defer></script>
-
-    <script>
-    </script>
-    <div id='calendar'></div>
+    <script src="fb.js"></script>
 </body>
 
->>>>>>> d86f1b262e94b62de5913c58d118586f58b0975d
 </html>
