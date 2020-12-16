@@ -1,47 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>시험추가</title>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
 </head>
+<style>
+    * {
+        margin: 2px;
+        font-size: 16px;
+        font-family: Consolas, sans-serif;
+    }
+    
+    .box1 {
+        border: 1px solid;
+        width: 350px;
+        height: 250px;
+    }
+    
+    .but1 {
+        position: absolute;
+        width: 60px;
+        height: 35px;
+        background-color: rgb(250, 250, 250);
+        font-size: 15px;
+        font-family: Consolas, sans-serif, ;
+        border: 3px solid skyblue;
+        color: black;
+        margin-left: 275px;
+    }
+    
+    .but2 {
+        position: static;
+        width: 50px;
+        height: 27px;
+        background-color: rgb(250, 250, 250);
+        font-size: 15px;
+        font-family: Consolas, sans-serif, ;
+        border: 3px solid skyblue;
+        color: black;
+    }
+    
+    .font1 {
+        font-size: 12px;
+        color: #a8a8a8;
+    }
+</style>
+
 <body>
-    <input type="text" id = "tit" placeholder="시험 입력">
-    <button onclick="search()">검색</button>
-    <p></p>
-    <select name = "dat" id = "dat">
-    <optgroup label = '실기'>
     <script>
-       var c=['2020-11-10','2020-11-20','2020-11-30'];
-       
-       for(i=0;i<c.length;i++)
-       {   
-           document.write("<option>"+c[i]+"</option>");
-       }
+        var firebaseConfig = {
+            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
+            authDomain: "liary-30c97.firebaseapp.com",
+            databaseURL: "https://liary-30c97.firebaseio.com/",
+            projectId: "liary-30c97",
+            storageBucket: "liary-30c97.appspot.com",
+            messagingSenderId: "1005204747821",
+            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
+            measurementId: "G-9PKBBRDZ38"
+        };
+        firebase.initializeApp(firebaseConfig);
     </script>
-    </optgroup><optgroup label = '필기'>
-        <script>
-           var v=['2020-11-10','2020-11-20','2020-11-30'];
-           for(i=0;i<v.length;i++)
-           {   
-               document.write("<option>"+v[i]+"</option>");
-           }
-        </script>
-        </optgroup>
-    </select>
-    <p><button onclick="add()">적용</button></p>
+    <div class='box1'>
+        <h2 style="padding: 0px 10px 1px; 
+            margin: 10px 2px 5px; 
+            border-left-width: 5px; 
+            border-left-style: solid; 
+            border-left-color: skyblue; 
+            font-size: 14pt; color: rgb(51, 51, 51); 
+            font-family: '맑은 고딕', 'Noto Sans Korean'; 
+            border-bottom-color: rgb(211, 211, 211); 
+            border-bottom-width: 1px; 
+            border-bottom-style: solid; 
+            letter-spacing: -0.07em; 
+            line-height: 35px; 
+            background-color: rgb(250, 250, 250);">시험 추가</h2>
+
+        <input type="text" id="tit" placeholder="자격증이름 입력후 Enter" onkeypress="return searchHandler(event)">
+
+        <p></p>
+
+        자격증선택 : <select id="box" onchange=select()>
+
+        </select>
+        <p>실기 : <select id="dat">
+        </select>
+            <button onclick="add()" class="but2">적용</button></p>
+        <p>필기 : <select id="dat2">
+        </select>
+            <button onclick="add2()" class="but2">적용</button></p>
+        <div class="font1">*주의사항*적용버튼 누른후 닫기버튼을 눌러주세요
+        </div>
+        <button onclick="self.close()" class="but1">닫기</button></p>
+    </div>
+    </div>
+
     <script>
-        function add()
-        {
-            var title = document.getElementById("tit").value;
-            var s = document.getElementById("dat");
-            var dat = s.options[s.selectedIndex].value;
-            window.opener.addev(title,dat,dat,true);
-            self.close();
+        // 데이터베이스 정의 부분
+        var db = firebase.firestore(); // 파이어스토어 불러옴
+        var Auth = window.opener.useruid;
+        console.log(Auth);
+
+        function add() {
+            var title1 = document.getElementById("box");
+            var tit1 = title1.options[title1.selectedIndex].text + " 실기시험";
+            var s1 = document.getElementById("dat");
+            var dat1 = s1.options[s1.selectedIndex].value;
+            var color = "skyblue";
+            window.opener.addev(tit1, dat1, dat1, true, color);
+            // user.uid로 유저의 데이터를 저장할 부분
+            console.log(Auth);
+
+            db.collection(Auth).doc(tit1).set({
+                    title: tit1,
+                    startdate: dat1,
+                    enddate: dat1,
+                    allDay: true,
+                    color: color
+                })
+                .then(function() {})
+                .catch(function(error) {
+                    console.error("Error adding document: ", error);
+                });
         }
-        function search()
-        {
-            window.open("searchtitle.html", "addlicense", "width=400, height=300, left=100, top=50");
+
+        function add2() {
+            var title2 = document.getElementById("box");
+            var tit2 = title2.options[title2.selectedIndex].text + " 필기시험";
+            var s2 = document.getElementById("dat2");
+            var dat2 = s2.options[s2.selectedIndex].value;
+            var color = "skyblue";
+            window.opener.addev(tit2, dat2, dat2, true, color);
+            // user.uid로 유저의 데이터를 저장할 부분
+            db.collection(Auth).doc(tit2).set({
+                    title: tit2,
+                    startdate: dat2,
+                    enddate: dat2,
+                    allDay: true,
+                    color: color
+                })
+                .then(function() {})
+                .catch(function(error) {
+                    console.error("Error adding document: ", error);
+                });
+        }
+
+        function search() {
+            window.open("addlicense2.html", "addlicense", "width=400, height=300, left=100, top=50");
+        }
+
+        function select() {
+            var ti = document.getElementById("box");
+            var litit = ti.options[ti.selectedIndex].value;
+            console.log(litit);
+            var db = firebase.firestore();
+            var docRef = db.collection("LicensesDate").doc(litit);
+
+            docRef.get().then(function(doc) {
+                if (doc.exists) {
+                    var select = document.getElementById('dat');
+                    var select2 = document.getElementById('dat2');
+                    select.options.length = 0;
+                    select2.options.length = 0;
+                    var sidat = doc.data().wrstart;
+                    var pidat = doc.data().prstart;
+                    var op = new Option();
+                    op.text = sidat;
+                    op.value = sidat;
+                    select.add(op);
+                    var op2 = new Option();
+                    op2.text = pidat;
+                    op2.value = pidat;
+                    select2.add(op2);
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }).catch(function(error) {
+                console.log("Error getting document:", error);
+            });
+
         }
     </script>
+    <script src="search.js"></script>
+
 </body>
+
 </html>
