@@ -6,38 +6,137 @@
     <title>일정추가</title>
     <style>
         * {
+            margin: 1px;
             font-size: 16px;
             font-family: Consolas, sans-serif;
         }
+        
+        .title1 {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .but1 {
+            position: absolute;
+            width: 100px;
+            left: 240px;
+            margin-top: 10px;
+            background-color: white;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: Consolas, sans-serif, ;
+            border: 3px solid skyblue;
+            color: skyblue;
+        }
+        
+        .but2 {
+            position: absolute;
+            width: 100px;
+            left: 130px;
+            margin-left: 5px;
+            margin-top: 10px;
+            background-color: white;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: Consolas, sans-serif, ;
+            border: 3px solid skyblue;
+            color: skyblue;
+        }
+        
+        .box1 {
+            border: 1px solid;
+            width: 350px;
+            height: 300px;
+        }
+        
+        .box2 {
+            border: 1px solid;
+        }
+        
+        .font1 {
+            font-size: 12px;
+            color: #a8a8a8;
+        }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
 </head>
 
 <body>
-    <p><input type="text" id="tit" placeholder="일정입력"></p>
-    <p><input type="date" id="startdate"></p>
-    <p><input type="time" id="starttime"></p>
-    <p><input type="date" id="enddate"></p>
-    <p><input type="time" id="endtime"></p>
-    <p><input type="text" id="color"></p>
-    <p><input type="text" id="reid"></p>
-    <button onclick="godat()">적용</button>
     <script>
-        // 적용 누를 시 실행 시킬 함수
+        var firebaseConfig = {
+            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
+            authDomain: "liary-30c97.firebaseapp.com",
+            databaseURL: "https://liary-30c97.firebaseio.com/",
+            projectId: "liary-30c97",
+            storageBucket: "liary-30c97.appspot.com",
+            messagingSenderId: "1005204747821",
+            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
+            measurementId: "G-9PKBBRDZ38"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <div class='box1'>
+        <h2 style="padding: 0px 10px 1px; 
+        margin: 10px 2px 5px; 
+        border-left-width: 5px; 
+        border-left-style: solid; 
+        border-left-color: skyblue; 
+        font-size: 14pt; color: rgb(51, 51, 51); 
+        font-family: '맑은 고딕', 'Noto Sans Korean'; 
+        border-bottom-color: rgb(211, 211, 211); 
+        border-bottom-width: 1px; 
+        border-bottom-style: solid; 
+        letter-spacing: -0.07em; 
+        line-height: 35px; 
+        background-color: rgb(250, 250, 250);">일정 추가</h2>
+        <p>일정 : <input type="text" id="tit" placeholder="일정입력">
+        </p>
+        <div class="font1">
+            *주의사항*제목 중복 입력시 원래있던 일정이 수정됩니다.
+        </div>
+        <p>시작날짜 : <input type="date" id="startdate"></p>
+        <p>시작시간 : <input type="time" id="starttime"></p>
+        <p>종료날짜 : <input type="date" id="enddate"></p>
+        <p>종료시간 : <input type="time" id="endtime"></p>
+        <div class="font1">
+            *주의사항*추가버튼 입력후 닫기버튼을 눌러주세요
+        </div>
+        <button onclick="godat()" class='but2'>추가</button>
+        <button onclick="self.close()" class='but1'>닫기</button>
+    </div>
+    <script>
+        // 데이터베이스 정의 부분
+        var db = firebase.firestore(); // 파이어스토어 불러옴
+        var Auth = window.opener.useruid; // 최근 로그인한 유저의 정보를 불러옴
+        console.log(Auth);
+
         function godat() {
             var tit = document.getElementById('tit').value;
             var startdat = document.getElementById('startdate').value + 'T' + document.getElementById('starttime').value
             var enddat = document.getElementById('enddate').value + 'T' + document.getElementById('endtime').value
-            var color = document.getElementById('color').value;
-            var reid = document.getElementById('reid').value;
-            // 파이어베이스를 이용해 실시간으로 데이터를 저장, 수정
-
-
-            // 달력에 추가하는 함수 실행
-            window.opener.addev(tit, startdat, enddat, false, color, reid);
-            self.close();
+            var color = "#3788d8";
+            window.opener.addev(tit, startdat, enddat, false, color);
+            if (Auth) {
+                db.collection(Auth).doc(tit).set({
+                        title: tit,
+                        startdate: startdat,
+                        enddate: enddat,
+                        allDay: false,
+                        color: color
+                    })
+                    .then(function() {})
+                    .catch(function(error) {
+                        console.error("Error adding document: ", error);
+                    });
+            } else {
+                console.log("로그인을 해주세요");
+            }
         }
     </script>
-    <script src="fb.js" defer></script>
+
 </body>
 
 </html>
