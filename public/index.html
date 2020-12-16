@@ -7,20 +7,55 @@
     <link href='./lib/main.css' rel='stylesheet' />
     <script src='./lib/main.js'></script>
     <script src='./lib/locales-all.js'></script>
-    <script>
-        var addev = "";
 
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
+
+</head>
+
+<body>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
+            authDomain: "liary-30c97.firebaseapp.com",
+            databaseURL: "https://liary-30c97.firebaseio.com",
+            projectId: "liary-30c97",
+            storageBucket: "liary-30c97.appspot.com",
+            messagingSenderId: "1005204747821",
+            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
+            measurementId: "G-9PKBBRDZ38"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+
+        var user = firebase.auth();
+        var useruid; // user의 uid
+        user.onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in.
+                useruid = user.uid;
+
+            } else {
+                // No user is signed in.
+            }
+        });
+        var addev = "";
         document.addEventListener('DOMContentLoaded', function() {
             var initialLocaleCode = 'ko';
             var localeSelectorEl = document.getElementById('locale-selector');
-            addev = function addev(title, startdate, enddate, allday, back, reid) {
+            addev = function addev(title, startdate, enddate, allday, back) {
                 calendar.addEvent({
                     title: title,
                     start: startdate,
                     end: enddate,
                     allDay: allday,
-                    backgroundColor: back,
-                    resourceid: reid
+                    color: back,
                 })
             }
             var calendarEl = document.getElementById('calendar');
@@ -52,34 +87,33 @@
                 selectMirror: true,
                 locale: initialLocaleCode,
 
-                select: function(arg) {
-                    var title = prompt('일정추가:');
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: arg.start,
-                            end: arg.end,
-                            allDay: arg.allDay
-                        })
-                    }
-                    calendar.unselect()
-                },
                 eventClick: function(arg) {
                     var tit = prompt('어떤 작업을 하시겠어요?')
                     if (tit == '삭제') {
+                        console.log(arg.event.title);
+                        db.collection(useruid).doc(arg.event.title).delete().then(function() {
+                            console.log("Document successfully deleted!");
+                            location.reload();
+                        }).catch(function(error) {
+                            console.error("Error removing document: ", error);
+                        });
                         arg.event.remove()
                         alert('삭제되었습니다');
                     } else if (tit == '완료') {
-                        var title = arg.event.title;
-                        calendar.addEvent({
-                            title: title,
-                            start: arg.event.start,
-                            end: arg.end,
-                            allDay: arg.allDay,
-                            backgroundColor: 'red',
-                        })
-                        arg.event.remove()
+                        var washingtonRef = db.collection(useruid).doc(arg.event.title);
 
+                        // Set the "capital" field of the city 'DC'
+                        return washingtonRef.update({
+                                color: "red"
+                            })
+                            .then(function() {
+                                alert("변경되었습니다!");
+                                location.reload();
+                            })
+                            .catch(function(error) {
+                                // The document probably doesn't exist.
+                                console.error("Error updating document: ", error);
+                            });
                     } else {
                         alert('잘못입력하셨습니다.');
                     }
@@ -89,57 +123,22 @@
 
 
                 dayMaxEvents: true, // allow "more" link when too many events
-                events: [{
-                    title: 'All Day Event',
-                    start: '2020-09-01'
-                }, {
-                    title: 'Long Event',
-                    start: '2020-09-07',
-                    end: '2020-09-10'
-                }, {
-                    groupId: 999,
-                    title: 'Repeating Event',
-                    start: '2020-09-09T16:00:00'
-                }, {
-                    groupId: 999,
-                    title: 'Repeating Event',
-                    start: '2020-09-16T16:00:00'
-                }, {
-                    title: 'Conference',
-                    start: '2020-09-11',
-                    end: '2020-09-13'
-                }, {
-                    title: 'Meeting',
-                    start: '2020-09-12T10:30:00',
-                    end: '2020-09-12T12:30:00'
-                }, {
-                    title: 'Lunch',
-                    start: '2020-09-12T12:00:00'
-                }, {
-                    title: 'Meeting',
-                    start: '2020-09-12T14:30:00'
-                }, {
-                    title: 'Happy Hour',
-                    start: '2020-09-12T17:30:00'
-                }, {
-                    title: 'Dinner',
-                    start: '2020-09-12T20:00:00'
-                }, {
-                    title: 'Birthday Party',
-                    start: '2020-09-13T07:00:00'
-                }, {
-                    title: 'Click for Google',
-                    url: '',
-                    start: '2020-11-07'
-                }, {
-                    title: 'dddd',
-                    start: '2020-11-05T16:00:00',
-                    end: '2020-11-05T16:00:00',
-                    allDay: false
-                }]
-            });
 
-            calendar.render();
+            });
+            setTimeout(function() {
+                console.log(usersdata[0]);
+                for (i = 0; i < usersdata.length; i++) {
+                    calendar.addEvent({
+                        title: usersdata[i].title,
+                        start: usersdata[i].startdate,
+                        end: usersdata[i].enddate,
+                        allDay: usersdata[i].allDay,
+                        color: usersdata[i].color
+                    });
+                }
+                calendar.render();
+            }, 1000)
+
         });
     </script>
     <style>
@@ -155,45 +154,31 @@
             margin: 0 auto;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
-
-    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
-
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
-
-</head>
-
-<body>
-    <section id="WhenSigendOut">
-        <button id="signInBtn">로그인!!</button>
-    </section>
-    <section id="whenSignedIn">
-        <div id="userDetails"></div>
-        <button id="signOutBtn">로그아웃</button>
-    </section>
+    <div class="box">
+        <section id="WhenSignedOut">
+            <button id="signInBtn" class="but1">로그인!!</button>
+        </section>
+        <section id="WhenSignedIn">
+            <div id="userDetails"></div>
+            <button id="signOutBtn" class="but1">로그아웃</button>
+        </section>
+    </div>
     <div id='calendar'></div>
-
-    <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyAtMau1mVeujFR7nJlrjSFXcdVNwT9GKVg",
-            authDomain: "liary-30c97.firebaseapp.com",
-            databaseURL: "https://liary-30c97.firebaseio.com",
-            projectId: "liary-30c97",
-            storageBucket: "liary-30c97.appspot.com",
-            messagingSenderId: "1005204747821",
-            appId: "1:1005204747821:web:4f1d2a2833fbf396316aa4",
-            measurementId: "G-9PKBBRDZ38"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        var db = firebase.firestore();
-        // 자격증의 이름과 번호 저장
-    </script>
-
-
+    <style>
+        .but1 {
+            background-color: #2C3E50;
+            color: white;
+            height: 25px;
+        }
+        
+        .box {
+            display: flex;
+            text-align: left;
+            max-width: 1100px;
+            margin: 0 auto;
+            margin-bottom: 25px;
+        }
+    </style>
     <script src="app.js"></script>
 </body>
 
